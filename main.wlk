@@ -4,10 +4,18 @@
 object aldo {
 	var ahorros = 6000 	// Ahorros iniciales
 	var suCasa = casaAldo
+	var gastos = 0
+	var descuidado = false
+	var masCaro = [0, 0]
 	
 	method ahorrar(monto)
 	{
 		ahorros += monto
+	}
+	
+	method casa()
+	{
+		return suCasa
 	}
 	
 	method superficieAPintar()
@@ -22,11 +30,30 @@ object aldo {
 	
 	method contratarA(contratista)
 	{
-		var costoTotal = contratista.calcularCostoTotal(suCasa);
-		var presupuesto = self.calcularPresupuestoMax();
-		if(costoTotal > presupuesto) return false;
-		ahorros
-		return self.calcularPresupuestoMax()>contratista.calcularCostoTotal(self.superficieAPintar())
+		var costoTotal = contratista.calcularCostoTotal(suCasa)
+		var presupuesto = self.calcularPresupuestoMax()
+		if(costoTotal > presupuesto) return false
+		
+		if(masCaro.get(1)<costoTotal) masCaro = [contratista, costoTotal]
+		ahorros -= costoTotal
+		gastos += costoTotal
+		descuidado = costoTotal > 5000 
+		return costoTotal
+	}
+	
+	method trabajoMasCaro()
+	{
+		return masCaro
+	}
+	
+	method cuantoGasto()
+	{
+		return gastos
+	}
+	
+	method fueDescuidado()
+	{
+		return descuidado
 	}
 	
 }
