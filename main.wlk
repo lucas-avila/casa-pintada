@@ -4,10 +4,18 @@
 object aldo {
 	var ahorros = 6000 	// Ahorros iniciales
 	var suCasa = casaAldo
+	var gastos = 0
+	var descuidado = false
+	var masCaro = [0, 0]
 	
 	method ahorrar(monto)
 	{
 		ahorros += monto
+	}
+	
+	method casa()
+	{
+		return suCasa
 	}
 	
 	method superficieAPintar()
@@ -20,9 +28,32 @@ object aldo {
 		return ahorros*0.20
 	}
 	
-	method contratarA(pintor)
+	method contratarA(contratista)
 	{
-		return self.calcularPresupuestoMax()>pintor.calcularCostoTotal(self.superficieAPintar())
+		var costoTotal = contratista.calcularCostoTotal(suCasa)
+		var presupuesto = self.calcularPresupuestoMax()
+		if(costoTotal > presupuesto) return false
+		
+		if(masCaro.get(1)<costoTotal) masCaro = [contratista, costoTotal]
+		ahorros -= costoTotal
+		gastos += costoTotal
+		descuidado = costoTotal > 5000 
+		return costoTotal
+	}
+	
+	method trabajoMasCaro()
+	{
+		return masCaro
+	}
+	
+	method cuantoGasto()
+	{
+		return gastos
+	}
+	
+	method fueDescuidado()
+	{
+		return descuidado
 	}
 	
 }
@@ -36,8 +67,9 @@ object raul {
 		return costoPorMetro2*metrosCuadrados
 	}
 	
-	method calcularCostoTotal(metrosCuadrados)
+	method calcularCostoTotal(unaCasa)
 	{
+		var metrosCuadrados = unaCasa.metrosCuadrados()
 		return self.calcularCostoManoDeObra(metrosCuadrados)+trabajaCon.calcularCostoPintura(metrosCuadrados)
 	}
 	
@@ -52,8 +84,9 @@ object carlos {
 	var costoMinimo = 500
 	var costoPorMetro2 = 30 
 	
-	method calcularCostoTotal(metrosCuadrados)
+	method calcularCostoTotal(unaCasa)
 	{
+		var metrosCuadrados = unaCasa.metrosCuadrados()
 		if (metrosCuadrados <= 20)
 		{
 			return costoMinimo
@@ -100,8 +133,9 @@ object venancio {
 		}
 	}
 	
-	method calcularCostoTotal(metrosCuadrados)
+	method calcularCostoTotal(unaCasa)
 	{
+		var metrosCuadrados = unaCasa.metrosCuadrados()
 		return self.calcularCostoManoDeObra(metrosCuadrados)+trabajaCon.calcularCostoPintura(metrosCuadrados)
 	}
 	
@@ -180,7 +214,7 @@ object rounder {
 ////////////////////////////////Parte 2//////////////////////////////////////////////////
 
 object casaAldo {
-	var habitaciones = #{cocina, habitacion}
+	const habitaciones = #{cocina, habitacion}
 	var pisos = 2
 	
 	method pisos()
@@ -198,13 +232,20 @@ object casaAldo {
 	{
 		return habitaciones.size()
 	}
+	
+	method metrosCuadrados()
+	{
+		var suma = 0
+		habitaciones.forEach({ h => suma += h.superficieAPintar() })
+		return suma;
+	}
 }
 
 object emanuel {
 	
 	method calcularCostoTotal(unaCasa)
 	{
-		return 100.000*unaCasa.cantAmbientes()*unaCasa.pisos()
+		return 100000*unaCasa.cantAmbientes()*unaCasa.pisos()
 	}
 	
 	
@@ -216,14 +257,14 @@ object marcos {
 	{
 		if (unaCasa.esComplicada())
 		{
-			return 50.000*unaCasa.cantAmbientes()+self.recargo(unaCasa.cantAmbientes())
+			return 50000*unaCasa.cantAmbientes()+self.recargo(unaCasa.cantAmbientes())
 		}
-		return 50.000*unaCasa.cantAmbientes()
+		return 50000*unaCasa.cantAmbientes()
 	}
 	
 	method recargo(cantAmbientes)
 	{
-		return 50.000*cantAmbientes*0.20
+		return 50000*cantAmbientes*0.20
 	}
 
 }
@@ -267,11 +308,11 @@ object roger {
 }
 
 object agencia {
-	var contratistas = #{raul, carlos, venancio, emanuel, marcos, lito, eduardo, roger}
+	const contratistas = #{raul, carlos, venancio, emanuel, marcos, lito, eduardo, roger}
 	
-	method puedeContratarA(presupuestoDisp)
+	method puedeContratarA(presupuestoDisp, unaCasa)
 	{
-		return contratistas.filter({contratista => contratista.calcularCostoTotal(unaCasa)}) //FALTA TERMINAR
+		return contratistas.filter {contratista => (contratista.calcularCostoTotal(unaCasa) <= presupuestoDisp)}
 	}
 	
 }

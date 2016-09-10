@@ -1,0 +1,109 @@
+import main.*
+
+test "Cuánto cobra el trabajo Emanuel por la casa de Aldo" {
+	assert.equals(emanuel.calcularCostoTotal(casaAldo), 400000)
+}
+
+test "Cuánto cobra el trabajo Marcos por la casa de Aldo" {
+	assert.equals(marcos.calcularCostoTotal(casaAldo), 100000)
+}
+
+test "Cuánto cobra el trabajo Marcos por una casa complicada de 2 pisos y 6 ambientes" {
+	const casa = object {
+		var pisos = 2
+			
+		method pisos()
+		{
+			return pisos
+		}
+			
+		method esComplicada()
+		{
+			return true
+		}
+			
+		method cantAmbientes()
+		{
+			return 6
+		}
+    }
+	assert.equals(marcos.calcularCostoTotal(casa), 360000)
+}
+
+test "Cuánto cobra el trabajo Lito por la casa de Aldo" {
+	assert.equals(lito.calcularCostoTotal(casaAldo), 1600)
+}
+
+test "Cuánto cobra el trabajo Eduardo por la casa de Aldo" {
+	assert.equals(eduardo.calcularCostoTotal(casaAldo), 200)
+}
+
+test "Cuánto cobra el trabajo Eduardo por una casa complicada de 4 ambientes" {
+	const casa = object {
+		var pisos = 2
+			
+		method pisos()
+		{
+			return pisos
+		}
+			
+		method esComplicada()
+		{
+			return true
+		}
+			
+		method cantAmbientes()
+		{
+			return 4
+		}
+    }
+	assert.equals(eduardo.calcularCostoTotal(casa), 800)
+}
+
+test "Cuánto cobra el trabajo roger por la casa de Aldo" {
+	assert.equals(roger.calcularCostoTotal(casaAldo), 200)
+}
+
+test "Cuánto cobra Roger por una casa de 4 pisos y 7 ambientes" {
+	const casa = object {
+		var pisos = 4
+			
+		method pisos()
+		{
+			return pisos
+		}
+			
+		method esComplicada()
+		{
+			return true
+		}
+			
+		method cantAmbientes()
+		{
+			return 7
+		}
+    }
+	assert.equals(roger.calcularCostoTotal(casa), 770)
+}
+
+test "Casa de aldo es complicada" {
+	assert.notThat(casaAldo.esComplicada())
+}
+
+test "Superficie casa de aldo" {
+	assert.equals(casaAldo.metrosCuadrados(), 41)
+}
+
+test "Aldo puede contrar a Carlos, Eduardo y Roger" {
+	var contrataA = [carlos, eduardo, roger]
+	assert.equals(contrataA, agencia.puedeContratarA(aldo.calcularPresupuestoMax(), aldo.casa()))
+	
+}
+
+test "Si aldo contrata a Roger, el presupuesto max es 1.160" {
+	aldo.contratarA(roger)
+	assert.equals(1160, aldo.calcularPresupuestoMax())
+}
+
+test "Si Aldo contrata a Roger y a Carlos, "
+
