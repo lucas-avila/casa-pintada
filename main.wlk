@@ -7,6 +7,7 @@ object aldo {
 	var gastos = 0
 	var descuidado = false
 	var masCaro = [0, 0]
+	var cantServicios = 0
 	
 	method ahorrar(monto)
 	{
@@ -34,11 +35,17 @@ object aldo {
 		var presupuesto = self.calcularPresupuestoMax()
 		if(costoTotal > presupuesto) return false
 		
+		cantServicios++
 		if(masCaro.get(1)<costoTotal) masCaro = [contratista, costoTotal]
 		ahorros -= costoTotal
 		gastos += costoTotal
 		descuidado = costoTotal > 5000 
 		return costoTotal
+	}
+	
+	method serviciosContratados()
+	{
+		return cantServicios
 	}
 	
 	method trabajoMasCaro()
@@ -243,9 +250,11 @@ object casaAldo {
 
 object emanuel {
 	
+	var costoAmbiente = 100000
+	
 	method calcularCostoTotal(unaCasa)
 	{
-		return 100000*unaCasa.cantAmbientes()*unaCasa.pisos()
+		return costoAmbiente*unaCasa.cantAmbientes()*unaCasa.pisos()
 	}
 	
 	
@@ -253,46 +262,56 @@ object emanuel {
 
 object marcos {
 	
+	var costoAmbiente = 50000
+	
 	method calcularCostoTotal(unaCasa) 
 	{
 		if (unaCasa.esComplicada())
 		{
-			return 50000*unaCasa.cantAmbientes()+self.recargo(unaCasa.cantAmbientes())
+			return costoAmbiente*unaCasa.cantAmbientes()+self.recargo(unaCasa.cantAmbientes())
 		}
-		return 50000*unaCasa.cantAmbientes()
+		return costoAmbiente *unaCasa.cantAmbientes()
 	}
 	
 	method recargo(cantAmbientes)
 	{
-		return 50000*cantAmbientes*0.20
+		return costoAmbiente *cantAmbientes*0.20
 	}
 
 }
 
 object lito {
 	
+	var costoHora = 50
+	var horasDia = 8
+	var tardanza = 2
+	
 	method calcularCostoTotal(unaCasa)
 	{
-		return unaCasa.cantAmbientes()*2*8*50
+		return unaCasa.cantAmbientes()*tardanza*horasDia*costoHora
 	}
 
 }
 
 object eduardo {
 	
+	var costoAmbiente = 100
+	
 	method calcularCostoTotal(unaCasa)
 	{
-		if (unaCasa.esComplicada()) return 200*unaCasa.cantAmbientes()
+		if (unaCasa.esComplicada()) return costoAmbiente*2*unaCasa.cantAmbientes()
 		
-		return 100*unaCasa.cantAmbientes()
+		return costoAmbiente*unaCasa.cantAmbientes()
 	}
 }
 
 object roger {
 	
+	var costoAmbiente = 100
+	
 	method calcularCostoTotal(unaCasa)
 	{
-		var total = unaCasa.cantAmbientes()*100
+		var total = unaCasa.cantAmbientes()*costoAmbiente
 		if(unaCasa.pisos() > 2)
 		{
 			return total+self.recargo(total)
@@ -316,3 +335,178 @@ object agencia {
 	}
 	
 }
+
+////////////////////////////////////Parte 3////////////////////////////////
+
+
+class Arquitecto{
+	
+	var costoAmbiente
+	
+	constructor(costo){
+		costoAmbiente = costo
+	}
+	
+	method calcularCostoTotal(unaCasa)
+	{
+		return costoAmbiente*unaCasa.cantAmbientes()*unaCasa.pisos()
+	}
+	
+}
+
+class MaestroMayorObra{
+	
+	var costoAmbiente
+	
+	constructor(costo) {
+		costoAmbiente = costo
+	}
+	
+	method calcularCostoTotal(unaCasa) 
+	{
+		if (unaCasa.esComplicada())
+		{
+			return costoAmbiente*unaCasa.cantAmbientes()+self.recargo(unaCasa.cantAmbientes())
+		}
+		return costoAmbiente *unaCasa.cantAmbientes()
+	}
+	
+	method recargo(cantAmbientes)
+	{
+		return costoAmbiente *cantAmbientes*0.20
+	}
+}
+
+class Albanil{
+	
+	var costoHora = 50
+	var horasDia = 8
+	var tardanza 
+	
+	constructor(tarda){
+		
+		tardanza = tarda
+	}
+	
+	method calcularCostoTotal(unaCasa)
+	{
+		return unaCasa.cantAmbientes()*tardanza*horasDia*costoHora
+	}
+}
+
+class Electricista{
+	
+	var costoAmbiente
+	
+	constructor(costo){
+		
+		costoAmbiente = costo
+	}
+	
+	method calcularCostoTotal(unaCasa)
+	{
+		if (unaCasa.esComplicada()) return costoAmbiente*2*unaCasa.cantAmbientes()
+		
+		return costoAmbiente*unaCasa.cantAmbientes()
+	}
+	
+}
+
+class Plomero{
+	
+	var costoAmbiente = 100
+	var recargo // Debe ser entre 0 y 1. 
+	
+	constructor(r){
+		
+		recargo = r 
+	}
+	
+	method calcularCostoTotal(unaCasa)
+	{
+		var total = unaCasa.cantAmbientes()*costoAmbiente
+		if(unaCasa.pisos() > 2)
+		{
+			return total+self.recargo(total)
+		}
+		return total
+	}
+	
+	method recargo(total)
+	{
+		return total*recargo
+	}
+	
+	
+}
+
+class Cliente {
+	var ahorros 
+	var suCasa
+	var gastos = 0
+	var descuidado = false
+	var masCaro = [0, 0]
+	var cantServicios = 0
+	
+	constructor(ahorro, casa){
+		
+		ahorros = ahorro
+		suCasa = casa
+	}
+	
+	method ahorrar(monto)
+	{
+		ahorros += monto
+	}
+	
+	method casa()
+	{
+		return suCasa
+	}
+	
+	method superficieAPintar()
+	{
+		return habitacion.superficieAPintar()+cocina.superficieAPintar()
+	}
+	
+	method calcularPresupuestoMax()
+	{
+		return ahorros*0.20
+	}
+	
+	method contratarA(contratista)
+	{
+		var costoTotal = contratista.calcularCostoTotal(suCasa)
+		var presupuesto = self.calcularPresupuestoMax()
+		if(costoTotal > presupuesto) return false
+		
+		cantServicios++
+		if(masCaro.get(1)<costoTotal) masCaro = [contratista, costoTotal]
+		ahorros -= costoTotal
+		gastos += costoTotal
+		descuidado = costoTotal > 5000 
+		return costoTotal
+	}
+	
+	method serviciosContratados()
+	{
+		return cantServicios
+	}
+	
+	method trabajoMasCaro()
+	{
+		return masCaro
+	}
+	
+	method cuantoGasto()
+	{
+		return gastos
+	}
+	
+	method fueDescuidado()
+	{
+		return descuidado
+	}
+	
+}
+
