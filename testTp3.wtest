@@ -1,0 +1,96 @@
+import example.*
+
+test "Cuánto cobra el trabajo Emanuel por la casa de Aldo" {
+	assert.equals(emanuel.calcularCostoTotal(casaAldo), 400000)
+}
+
+test "Cuánto cobra el trabajo Marcos por la casa de Aldo" {
+	assert.equals(marcos.calcularCostoTotal(casaAldo), 100000)
+}
+
+test "Cuánto cobra el trabajo Marcos por una casa complicada de 2 pisos y 6 ambientes" {
+	
+	casaPrueba.setPisos(2)
+	casaPrueba.setAmbientes(6)
+	assert.equals(marcos.calcularCostoTotal(casaPrueba), 360000)
+}
+
+test "Cuánto cobra el trabajo Lito por la casa de Aldo" {
+	assert.equals(lito.calcularCostoTotal(casaAldo), 1600)
+}
+
+test "Cuánto cobra el trabajo Eduardo por la casa de Aldo" {
+	assert.equals(eduardo.calcularCostoTotal(casaAldo), 200)
+}
+
+test "Cuánto cobra el trabajo Eduardo por una casa complicada de 4 ambientes" {
+
+	casaPrueba.setAmbientes(4)
+	assert.equals(eduardo.calcularCostoTotal(casaPrueba), 800)
+}
+
+test "Cuánto cobra el trabajo roger por la casa de Aldo" {
+	assert.equals(roger.calcularCostoTotal(casaAldo), 200)
+}
+
+test "Cuánto cobra Roger por una casa de 4 pisos y 7 ambientes" {
+	
+	casaPrueba.setPisos(4)
+	casaPrueba.setAmbientes(7)
+	assert.equals(roger.calcularCostoTotal(casaPrueba), 770)
+}
+
+test "Casa de aldo es complicada" {
+	assert.notThat(casaAldo.esComplicada())
+}
+
+test "Superficie casa de aldo" {
+	assert.equals(casaAldo.metrosCuadrados(), 41)
+}
+
+test "Aldo puede contrar a Carlos, Eduardo y Roger" {
+	var contrataA = #{carlos, eduardo, roger}
+	assert.equals(contrataA, agencia.puedeContratarA(aldo.calcularPresupuestoMax(), aldo.casa()))
+	
+}
+
+test "Si aldo contrata a Roger, el presupuesto max es 1.160" {
+	aldo.contratarA(roger)
+	assert.equals(1160, aldo.calcularPresupuestoMax())
+}
+
+test "Si Aldo contrata a Roger y a Carlos, tuvo 2 servicios"{
+	aldo.contratarA(roger)
+	aldo.contratarA(carlos)
+	assert.equals(2, aldo.serviciosContratados())
+}
+
+test "Aldo puede contratar a Marcos" {
+	assert.notThat(aldo.loPuedeContratar(marcos))
+}
+
+test "Si aldo contrata a Carlos y Roger entonces no es un descuidado" {
+	aldo.contratarA(roger)
+	aldo.contratarA(carlos)
+	assert.notThat(aldo.fueDescuidado())
+}
+
+test "Aldo ahorra 1 millon y contrata a Marcos entonces es un descuidado" {
+	aldo.ahorrar(1000000)
+	aldo.contratarA(marcos)
+	assert.that(aldo.fueDescuidado())
+}
+
+test "Si aldo contrata a Roger y a Carlos, el trabajo mas caro es el de Carlos" {
+	aldo.contratarA(roger)
+	aldo.contratarA(carlos)
+	assert.equals(carlos, (aldo.getMasCaro()))
+}
+
+////////////////////////////Parte 3////////////////////////////////////
+
+test "Noelia cobra 2000 por la casa de Damian"{
+	
+	fixture.inicializarAgenciaNueva()
+	assert.that(2000,noelia.calcularCostoTotal())
+}

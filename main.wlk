@@ -4,10 +4,7 @@
 object aldo {
 	var ahorros = 6000 	// Ahorros iniciales
 	var suCasa = casaAldo
-	var gastos = 0
-	var descuidado = false
-	var masCaro = [0, 0]
-	var cantServicios = 0
+	var servicios = []
 	
 	method ahorrar(monto)
 	{
@@ -31,36 +28,42 @@ object aldo {
 	
 	method contratarA(contratista)
 	{
-		var costoTotal = contratista.calcularCostoTotal(suCasa)
-		var presupuesto = self.calcularPresupuestoMax()
-		if(costoTotal > presupuesto) return false
-		
-		cantServicios++
-		if(masCaro.get(1)<costoTotal) masCaro = [contratista, costoTotal]
-		ahorros -= costoTotal
-		gastos += costoTotal
-		descuidado = costoTotal > 5000 
-		return costoTotal
+		if (!self.loPuedeContratar(contratista))
+			 error.throwWithMessage("No lo puede contratar")
+		servicios.add(contratista)
+		self.actualizarFinanzas(contratista.calcularCostoTotal(suCasa))
+	}
+	
+	method actualizarFinanzas(plataQueVolo)
+	{
+		ahorros -= plataQueVolo
+	}
+	
+	method getMasCaro()
+	{
+		var costos = servicios.map({servicio => servicio.calcularCostoTotal(suCasa)})
+		return servicios.find({servicio => servicio.calcularCostoTotal(suCasa)==costos.max()})
+	}
+	
+	method loPuedeContratar(contratista)
+	{
+		var listaContratistas = agencia.puedeContratarA(self.calcularPresupuestoMax(), suCasa)
+		return listaContratistas.contains(contratista)
 	}
 	
 	method serviciosContratados()
 	{
-		return cantServicios
-	}
-	
-	method trabajoMasCaro()
-	{
-		return masCaro
+		return servicios.size()
 	}
 	
 	method cuantoGasto()
 	{
-		return gastos
+		return servicios.sum({servicio => servicio.calcularCostoTotal(suCasa)})
 	}
 	
 	method fueDescuidado()
 	{
-		return descuidado
+		return servicios.any({servicio => servicio.calcularCostoTotal(suCasa)>5000})
 	}
 	
 }
@@ -219,6 +222,36 @@ object rounder {
 }
 
 ////////////////////////////////Parte 2//////////////////////////////////////////////////
+object casaPrueba {
+		var pisos 
+		var ambientes
+			
+		method pisos()
+		{
+			return pisos
+		}
+		
+		method setPisos(p)
+		{
+			pisos = p	
+		}
+		
+		method setAmbientes(a)
+		{
+			ambientes = a
+		}
+		
+		method cantAmbientes()
+		{
+			return ambientes
+		}
+			
+		method esComplicada()
+		{
+			return true
+		}
+    }
+
 
 object casaAldo {
 	const habitaciones = #{cocina, habitacion}
@@ -231,8 +264,7 @@ object casaAldo {
 	
 	method esComplicada()
 	{
-		if (habitaciones.size() > 3) return true
-		return false
+		return habitaciones.size() > 3
 	}
 	
 	method cantAmbientes()
@@ -244,7 +276,7 @@ object casaAldo {
 	{
 		var suma = 0
 		habitaciones.forEach({ h => suma += h.superficieAPintar() })
-		return suma;
+		return suma
 	}
 }
 
@@ -266,16 +298,18 @@ object marcos {
 	
 	method calcularCostoTotal(unaCasa) 
 	{
+		var ambientes = unaCasa.cantAmbientes()
+		var costoBase = costoAmbiente*ambientes
 		if (unaCasa.esComplicada())
 		{
-			return costoAmbiente*unaCasa.cantAmbientes()+self.recargo(unaCasa.cantAmbientes())
+			return costoBase+self.recargo(ambientes)
 		}
-		return costoAmbiente *unaCasa.cantAmbientes()
+		return costoBase
 	}
 	
 	method recargo(cantAmbientes)
 	{
-		return costoAmbiente *cantAmbientes*0.20
+		return costoAmbiente*cantAmbientes*0.20
 	}
 
 }
@@ -299,9 +333,11 @@ object eduardo {
 	
 	method calcularCostoTotal(unaCasa)
 	{
-		if (unaCasa.esComplicada()) return costoAmbiente*2*unaCasa.cantAmbientes()
+		var costoBase = costoAmbiente*unaCasa.cantAmbientes()
 		
-		return costoAmbiente*unaCasa.cantAmbientes()
+		if (unaCasa.esComplicada()) return 2*costoBase
+		
+		return costoBase
 	}
 }
 
@@ -364,11 +400,13 @@ class MaestroMayorObra{
 	
 	method calcularCostoTotal(unaCasa) 
 	{
+		var ambientes = unaCasa.cantAmbientes()
+		var costoBase = costoAmbiente*ambientes
 		if (unaCasa.esComplicada())
 		{
-			return costoAmbiente*unaCasa.cantAmbientes()+self.recargo(unaCasa.cantAmbientes())
+			return costoBase+self.recargo(ambientes)
 		}
-		return costoAmbiente *unaCasa.cantAmbientes()
+		return costoBase
 	}
 	
 	method recargo(cantAmbientes)
@@ -383,8 +421,8 @@ class Albanil{
 	var horasDia = 8
 	var tardanza 
 	
-	constructor(tarda){
-		
+	constructor(tarda)
+	{
 		tardanza = tarda
 	}
 	
@@ -398,16 +436,17 @@ class Electricista{
 	
 	var costoAmbiente
 	
-	constructor(costo){
-		
+	constructor(costo)
+	{
 		costoAmbiente = costo
 	}
 	
 	method calcularCostoTotal(unaCasa)
 	{
-		if (unaCasa.esComplicada()) return costoAmbiente*2*unaCasa.cantAmbientes()
+		var costoBase = costoAmbiente*unaCasa.cantAmbientes()
+		if (unaCasa.esComplicada()) return 2*costoBase
 		
-		return costoAmbiente*unaCasa.cantAmbientes()
+		return costoBase
 	}
 	
 }
@@ -441,17 +480,15 @@ class Plomero{
 }
 
 class Cliente {
-	var ahorros 
+	var ahorros = 0	// Ahorros iniciales
 	var suCasa
-	var gastos = 0
-	var descuidado = false
-	var masCaro = [0, 0]
-	var cantServicios = 0
+	var servicios = []
+	var porcentajeAhorros 
 	
-	constructor(ahorro, casa){
-		
-		ahorros = ahorro
-		suCasa = casa
+	constructor(plata, porcentaje)
+	{
+		ahorros = plata
+		porcentajeAhorros = porcentaje // p debe ser entre 0 y 1.
 	}
 	
 	method ahorrar(monto)
@@ -471,42 +508,167 @@ class Cliente {
 	
 	method calcularPresupuestoMax()
 	{
-		return ahorros*0.20
+		return ahorros*porcentajeAhorros
 	}
 	
 	method contratarA(contratista)
 	{
-		var costoTotal = contratista.calcularCostoTotal(suCasa)
-		var presupuesto = self.calcularPresupuestoMax()
-		if(costoTotal > presupuesto) return false
+		var costo = contratista.calcularCostoTotal(suCasa)
 		
-		cantServicios++
-		if(masCaro.get(1)<costoTotal) masCaro = [contratista, costoTotal]
-		ahorros -= costoTotal
-		gastos += costoTotal
-		descuidado = costoTotal > 5000 
-		return costoTotal
+		self.loPuedeContratar(contratista)
+		servicios.add(contratista)
+		self.actualizarFinanzas(costo)
+
+	}
+	
+	method actualizarFinanzas(plataQueVolo)
+	{
+		ahorros -= plataQueVolo
+	}
+	
+	method getMasCaro()
+	{
+		var costos = servicios.map({servicio => servicio.calcularCostoTotal(suCasa)})
+		return servicios.find({servicio => servicio.calcularCostoTotal(suCasa)==costos.max()})
+	}
+	
+	method loPuedeContratar(contratista)
+	{
+		var listaContratistas = agencia.puedeContratarA(self.calcularPresupuestoMax(), suCasa)
+		return listaContratistas.contains(contratista)
 	}
 	
 	method serviciosContratados()
 	{
-		return cantServicios
-	}
-	
-	method trabajoMasCaro()
-	{
-		return masCaro
+		return servicios
 	}
 	
 	method cuantoGasto()
 	{
-		return gastos
+		return servicios.sum({servicio => servicio.calcularCostoTotal(suCasa)})
 	}
 	
 	method fueDescuidado()
 	{
-		return descuidado
+		return servicios.any({servicio => servicio.calcularCostoTotal(suCasa)>5000})
 	}
 	
 }
+
+object casaMilena {
+	
+	const habitaciones = #{new Habitacion(4,3,3), new Habitacion(3,2,2)}
+	var pisos = 2
+	
+	method pisos()
+	{
+		return pisos
+	}
+	
+	method esComplicada()
+	{
+		return habitaciones.size() > 3
+	}
+	
+	method cantAmbientes()
+	{
+		return habitaciones.size()
+	}
+	
+	method metrosCuadrados()
+	{
+		var suma = 0
+		habitaciones.forEach({ h => suma += h.superficieAPintar() })
+		return suma
+	}
+	
+}
+
+object casaDamian {
+	
+	const habitaciones = #{new Habitacion(4,3,3), new Habitacion(3,2,2), new Habitacion(3,2,3), new Habitacion(3,4,2)}
+	var pisos = 4
+	
+	method pisos()
+	{
+		return pisos
+	}
+	
+	method esComplicada()
+	{
+		return habitaciones.size() > 3
+	}
+	
+	method cantAmbientes()
+	{
+		return habitaciones.size()
+	}
+	
+	method metrosCuadrados()
+	{
+		var suma = 0
+		habitaciones.forEach({ h => suma += h.superficieAPintar() })
+		return suma
+	}
+	
+}
+
+class Habitacion {
+	var largo 
+	var ancho
+	var profundidad
+	
+	constructor(l, a, p)
+	{
+		largo = l
+		ancho = a
+		profundidad = p
+	}
+	
+	method superficieAPintar()
+	{
+		return largo*ancho*profundidad
+	}
+}
+
+
+object agenciaNueva {
+	var contratistas = [raul, carlos, venancio, emanuel, marcos, lito, eduardo, roger]
+	
+	method puedeContratarA(presupuestoDisp, unaCasa)
+	{
+		return contratistas.filter {contratista => (contratista.calcularCostoTotal(unaCasa) <= presupuestoDisp)}
+	}
+	
+	method agregarContratista(contratista)
+	{
+		contratistas.add(contratista)
+	}
+	
+}
+
+
+object fixture{
+	
+	method inicializarAgenciaNueva()
+	{
+		var noelia = new Electricista(250)
+		var silvina = new Plomero(0.25)
+		var eliana = new Electricista(12000)
+		var dodain = new Electricista(3)
+		
+		agenciaNueva.agregarContratista(noelia)
+		agenciaNueva.agregarContratista(silvina)
+		agenciaNueva.agregarContratista(eliana)
+		agenciaNueva.agregarContratista(dodain)
+	}
+	
+	
+}
+
+
+
+
+
+
 
