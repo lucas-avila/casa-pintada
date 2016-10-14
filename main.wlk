@@ -564,35 +564,6 @@ object agenciaNueva {
 }
 
 
-object fixture{
-	
-	method inicializarAgenciaNueva()
-	{
-		var noelia = new Electricista(250)
-		var silvina = new Plomero(0.25)
-		var eliana = new Electricista(12000)
-		var dodain = new Electricista(3)
-		
-		agenciaNueva.agregarContratista(noelia)
-		agenciaNueva.agregarContratista(silvina)
-		agenciaNueva.agregarContratista(eliana)
-		agenciaNueva.agregarContratista(dodain)
-		
-		var casaMilena = new Casa([new Habitacion(4,3,3), new Habitacion(3,2,2)], 2)
-		var casaDamian = new Casa([new Habitacion(4,3,3), new Habitacion(3,2,2), new Habitacion(3,2,3), new Habitacion(3,4,2)], 4)
-		var casaAldo = new Casa([cocina, habitacion], 2)
-		
-		var aldo = new Cliente(6000, 0.20, casaAldo)
-		var milena = new Cliente(2000, 0.20, casaMilena)
-		
-		agenciaNueva.agregarCliente(aldo)
-		agenciaNueva.agregarCliente(milena)
-		agenciaNueva.agregarCliente(damian)
-		//damian declarado en el codigo
-	}
-	
-	
-}
 
 
 
