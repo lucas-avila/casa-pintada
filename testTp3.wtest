@@ -1,4 +1,4 @@
-import casapintada.*
+import main.*
 import casapintadafixture.*
 
 test "Cuánto cobra el trabajo Emanuel por la casa de Aldo" {		
