@@ -532,6 +532,7 @@ class Habitacion {
 
 object agenciaNueva {
 	var contratistas = [raul, carlos, venancio, emanuel, marcos, lito, eduardo, roger]
+	var clientes = []
 	
 	method puedeContratarA(presupuestoDisp, unaCasa)
 	{
@@ -542,7 +543,24 @@ object agenciaNueva {
 	{
 		contratistas.add(contratista)
 	}
+	method agregarCliente(cliente)
+	{
+		clientes.add(cliente)
+	}
 	
+	method fueContratadoPor(contratista)
+	{
+		return clientes.map({x => (x.serviciosContratados()).contains(contratista) })
+	}
+	
+	method tomoDePuntoA(contratista,cliente)
+	{
+		return ((cliente.serviciosContratados()).map({x=> x == contratista})).size() > 2
+	}
+	method plataEsteMes(contratista)
+	{
+		return ((self.fueContratadoPor(contratista)).map({x=> x.cuantoGasto()})).sum()
+	}
 }
 
 
@@ -566,6 +584,10 @@ object fixture{
 		
 		var aldo = new Cliente(6000, 0.20, casaAldo)
 		var milena = new Cliente(2000, 0.20, casaMilena)
+		
+		agenciaNueva.agregarCliente(aldo)
+		agenciaNueva.agregarCliente(milena)
+		agenciaNueva.agregarCliente(damian)
 		//damian declarado en el codigo
 	}
 	
