@@ -2,6 +2,9 @@
  * Power is an illusion
  */
 
+// LUCAS: Los comentarios más generales los voy a ir haciendo aca. Las correcciones o comentarios puntuales sobre alguna parte del tp las voy a ir haciendo inline.
+//        - Nos es necesario mantener todo lo previo, de hecho alguna cosas deberian haber cambiando
+
 object raul {
 	var costoPorMetro2 = 25
 	var trabajaCon = pintura // variable para luego pasar a trabajar con pintura a granel.
@@ -186,7 +189,8 @@ object casaPrueba {
 		}
     }
 
-
+// LUCAS:
+// var emanuel = new Arquitecto(100000)
 object emanuel {
 	
 	var costoAmbiente = 100000
@@ -199,6 +203,8 @@ object emanuel {
 	
 }
 
+// LUCAS:
+// var marcos = new MaestroMayorObra(50000)
 object marcos {
 	
 	var costoAmbiente = 50000
@@ -221,6 +227,8 @@ object marcos {
 
 }
 
+// LUCAS:
+// var lito = new Albanil(2)
 object lito {
 	
 	var costoHora = 50
@@ -234,6 +242,8 @@ object lito {
 
 }
 
+// LUCAS:
+// var eduardo = new Electricista(100)
 object eduardo {
 	
 	var costoAmbiente = 100
@@ -248,6 +258,9 @@ object eduardo {
 	}
 }
 
+// LUCAS:
+// var roger = new Plomero(0.1)
+// var roger = new Plomero(10) <- Ver comentarios en class Plomero
 object roger {
 	
 	var costoAmbiente = 100
@@ -305,6 +318,7 @@ class MaestroMayorObra{
 		costoAmbiente = costo
 	}
 	
+	// LUCAS: recomendacion, algunos cambios en al algoritmia. Se los corregi en la parte 2.
 	method calcularCostoTotal(unaCasa) 
 	{
 		var ambientes = unaCasa.cantAmbientes()
@@ -382,6 +396,10 @@ class Plomero{
 	{
 		return total*recargo
 	}
+	
+	//LUCAS: Algunos comentarios sobre el recargo. Si le van a poner alguna logica complicada a un atributo, estaria bueno controlarlo cuando se setea.
+	//       Porque alguien no puede querer cobrar más del total? Por ejemplo 100 si no es complicada y 300 si es complicada.
+	//       Tal vez seria mejor guardar en "recargo" el porcentaje. Ej: 10, 50, 200. Despues seria redefinir recargo como "return total*recargo/100"
 	
 	
 }
