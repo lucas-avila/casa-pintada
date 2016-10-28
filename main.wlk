@@ -4,6 +4,12 @@
 
 // LUCAS: Los comentarios más generales los voy a ir haciendo aca. Las correcciones o comentarios puntuales sobre alguna parte del tp las voy a ir haciendo inline.
 //        - Nos es necesario mantener todo lo previo, de hecho alguna cosas deberian haber cambiando
+//        - La idea no era poner los nuevos clientes y contratistas en un fixture sino aca.
+//        - Tal vez hubiera estado bueno pasar la agencia a una clase para poder tener diferentes agencias sin repetir codigo, la nueva no tiene que tener los contratistas "viejos"
+//        - Como oportunidad de mejora, no es una buena idea tener un unico archivo eterno. La propuesta seria:
+//              + Sacar codigo de entregas anteriores (solo el que no sirva más, los pintores y la pintura los necesitamos. A aldo tambien pero desaparecio!)
+//              + Llevar el codigo de las clases a otros archivos e incluirlos con "import"
+//              + Mantener en main.wlk solo lo más importante
 
 object raul {
 	var costoPorMetro2 = 25
@@ -408,7 +414,7 @@ class Cliente {
 	var ahorros = 0	// Ahorros iniciales
 	var suCasa
 	var servicios = []
-	var porcentajeAhorros 
+	var porcentajeAhorros // LUCAS: Ver class Plomero
 	
 	constructor(plata, porcentaje){
 		ahorros = plata
